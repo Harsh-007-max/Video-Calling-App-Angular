@@ -1,0 +1,11 @@
+<ngx-particles
+    [id]="id"
+    [options]="particlesOptions"
+    (particlesLoaded)="particlesLoaded($event)"
+    class="z-0 fixed top-0 left-0"
+>
+</ngx-particles>
+<div class="m-2 z-10 relative text-white">
+    <app-navbar></app-navbar>
+    <router-outlet></router-outlet>
+</div>

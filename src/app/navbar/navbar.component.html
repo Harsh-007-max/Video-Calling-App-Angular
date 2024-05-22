@@ -1,0 +1,18 @@
+<nav class="opacity-80">
+    <div class="flex p-2 justify-between text-sm text-white">
+        <div
+            class="order-2 md:order-1 ms-5 md:ms-0 flex text-justify items-center"
+        >
+            <img src="../../assets/logo_1.png" class="w-8 mr-3" alt="" />
+            <span class="text-sm md:text-2xl"> {{ projectName }} </span>
+        </div>
+        <div class="order-1 md:order-3"></div>
+        <button
+            class="order-3 flex items-center space-x-2"
+            (click)="onSignUp()"
+        >
+            <div class="">{{ loginText }}</div>
+            <img [src]="imgSrc" class="w-8 rounded-full" />
+        </button>
+    </div>
+</nav>
