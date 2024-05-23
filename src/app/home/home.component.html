@@ -1,1 +1,71 @@
-<p>hello {{this.us.additionalUserInfo.profile.given_name}}</p>
+<div class="flex flex-col justify-center space-y-2 items-center h-svh">
+  <span class="md:text-xl">Greetings {{ userName }}</span>
+  <div
+    class="flex flex-col space-y-5 md:space-y-0 md:flex-row border-2 p-5 border-gray-300 border-opacity-30 rounded-2xl glass"
+  >
+    <div class="left md:mr-4">
+      <div
+        class="flex video-container w-52 h-52 items-center justify-center rounded-2xl border-2 border-gray-900 bg-opacity-100 bg-black"
+      >
+        <webcam
+          *ngIf="toggleCam"
+          [width]="vwidth"
+          [trigger]="triggerObservable"
+          (imageCapture)="handleImage($event)"
+        ></webcam>
+        <img [src]="imgSrc" class="w-8 rounded-full" *ngIf="!toggleCam" />
+
+        <audio #audioElement autoplay></audio>
+      </div>
+    </div>
+    <div class="right flex flex-col w-52 text-white space-y-3 ">
+      <div
+        class="flex justify-evenly blur-bg p-3 pb-2 rounded-2xl"
+      >
+        <button type="button" (click)="handleToggleCam()">
+          <span *ngIf="!toggleCam" class="material-symbols-outlined">
+            videocam
+          </span>
+          <span *ngIf="toggleCam" class="material-symbols-outlined">
+            videocam_off
+          </span>
+        </button>
+        <button type="button" (click)="handleToggleMic()">
+          <span *ngIf="!toggleMic" class="material-symbols-outlined">
+            mic
+          </span>
+          <span *ngIf="toggleMic" class="material-symbols-outlined">
+            mic_off
+          </span>
+        </button>
+      </div>
+      <div class="flex items-center">
+        <input
+          type="text"
+          class="py-2 px-4 rounded-full w-full bg-gray-500 bg-opacity-25"
+          name="roomID"
+          placeholder="room ID Here"
+        />
+        <button type="button" class="-ml-9 mt-2">
+          <span class="material-symbols-outlined"> content_copy </span>
+        </button>
+      </div>
+      <div class="">
+        <input
+          type="text"
+          class="py-2 px-4 rounded-full w-full bg-gray-500 bg-opacity-25"
+          name="roomID"
+          placeholder="paste exisiting Romm ID"
+        />
+      </div>
+      <div class="flex justify-evenly">
+        <button type="button" class="bg-purple-700 bg-opacity-50 py-1 px-2 w-fit rounded-full">
+          Join Call
+        </button>
+        <button type="button" class="bg-purple-700 bg-opacity-50 py-1 px-2 w-fit rounded-full">
+          Enter Room
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

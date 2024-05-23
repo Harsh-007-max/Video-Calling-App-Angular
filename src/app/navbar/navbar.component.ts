@@ -1,11 +1,12 @@
-import { Component } from "@angular/core";
-import { Router } from "@angular/router";
-import { FireAuthServiceService } from "../authentication/fire-auth-service.service";
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { FireAuthServiceService } from '../authentication/fire-auth-service.service';
 
+import { User } from '@angular/fire/auth';
 @Component({
-  selector: "app-navbar",
-  templateUrl: "./navbar.component.html",
-  styleUrl: "./navbar.component.css",
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.css',
 })
 export class NavbarComponent {
   constructor(
@@ -13,37 +14,30 @@ export class NavbarComponent {
     private authService: FireAuthServiceService,
   ) {}
   ngOnInit() {
-    this.checkLoggedIn();
-  }
-
-  projectName = "Neo Chat";
-  loginText = "Sign Up";
-  signUp: boolean = false;
-  imgSrc = "../../assets/sign_up.png";
-
-  checkLoggedIn() {
-    const interval = setInterval(() => {
-      if (this.isLoggedIn()) {
-        clearInterval(interval);
+    this.authService.user$.subscribe((user:any)=>{
+      this.user = user;
+      if(this.user){
+        this.loginText = this.user.displayName??user.email.split("@")[0];
+        this.loginText = this.loginText!.split(" ")[0];
+        this.imgSrc = this.user.photoURL?? '../../assets/sign_up.png';
       }
-    }, 5000);
+    })
   }
 
-  isLoggedIn(): boolean {
-    if (this.authService.user != null) {
-      this.imgSrc = this.authService.user.additionalUserInfo.profile.picture;
-      this.loginText =
-        this.authService.user.additionalUserInfo.profile.given_name.toLowerCase();
-      return true;
-    }
-    return false;
-  }
+  projectName = 'Neo Chat';
+  loginText: string | null = 'Sign Up';
+  signUp: boolean = false;
+  imgSrc: string | null = '../../assets/sign_up.png';
+  user: User | null = null;
+
   onSignUp(): void {
-    this.signUp = !this.signUp;
-    if (this.signUp) {
-      this._router.navigate(["/signUp"]);
-    } else {
-      this._router.navigate(["/"]);
+    if (this.user == null) {
+      this.signUp = !this.signUp;
+      if (this.signUp) {
+        this._router.navigate(['/signUp']);
+      } else {
+        this._router.navigate(['/']);
+      }
     }
   }
 }

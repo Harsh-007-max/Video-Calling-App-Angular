@@ -1,25 +1,69 @@
-import { Injectable } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { Router } from "@angular/router";
-import firebase from "firebase/compat/app";
-import { Observable, catchError, from, map } from "rxjs";
+import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { Router, NavigationEnd } from '@angular/router';
+import firebase from 'firebase/compat/app';
+import { Observable, catchError, from, map, BehaviorSubject } from 'rxjs';
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class FireAuthServiceService {
+  private userSubject = new BehaviorSubject<any>(null);
+  user$ = this.userSubject.asObservable();
   constructor(
     private angular_fire_auth: AngularFireAuth,
     private router: Router,
-  ) {}
+  ) {
+    this.autoLogin();
+  }
+
+  autoLogin() {
+    // if (this.user === null) {
+    this.angular_fire_auth.authState.subscribe((user: any) => {
+      this.userSubject.next(user);
+      if (user != null) {
+        if (
+          !this.router.url.startsWith('/call') &&
+          !this.router.url.startsWith('/home')
+        ) {
+          this.router.navigate(['home']);
+        }
+      } else {
+        this.user = null;
+      }
+    });
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        if (event.url === '/home' && !this.angular_fire_auth.currentUser) {
+          this.router.navigate(['/login']);
+        }
+      }
+    });
+    // }
+  }
 
   //register new user
-  register(email: string, password: string): Observable<any> {
+  register(
+    email: string,
+    password: string,
+    displayName: string,
+  ): Observable<any> {
     return from(
-      this.angular_fire_auth.createUserWithEmailAndPassword(email, password),
+      this.angular_fire_auth
+        .createUserWithEmailAndPassword(email, password)
+        .then((res: any) => {
+          const user = res.user;
+          if (user) {
+            user
+              .updateProfile({ displayName: displayName })
+              .then(() => console.log('User name updated successfully'))
+              .catch((error: any) =>
+                console.log('Error occured while updating username ', error),
+              );
+          }
+        }),
     ).pipe(
       map(() => {
-        console.log("sign up successful");
-        this.router.navigate(["/home"]);
+        console.log('sign up successful');
       }),
       catchError((error: any) => {
         console.error(`Error during registeration:${error.message}`);
@@ -31,10 +75,13 @@ export class FireAuthServiceService {
   //login through existing user
   login(email: string, password: string): Observable<any> {
     return from(
-      this.angular_fire_auth.signInWithEmailAndPassword(email, password),
+      this.angular_fire_auth
+        .signInWithEmailAndPassword(email, password)
+        .then((res: any) => {
+          this.userSubject.next(res.user);
+        }),
     ).pipe(
       map(() => {
-        this.router.navigate(["/home"]);
       }),
       catchError((error: any) => {
         console.error(`Error during login:${error.message}`);
@@ -47,7 +94,7 @@ export class FireAuthServiceService {
   logout(): Observable<any> {
     return from(this.angular_fire_auth.signOut()).pipe(
       map(() => {
-        this.router.navigate(["/home"]);
+        this.router.navigate(['']);
       }),
       catchError((error: any) => {
         console.error(`Error during logout:${error.message}`);
@@ -65,15 +112,12 @@ export class FireAuthServiceService {
 
   signInWithGoogle(): Observable<any> {
     const provider = new firebase.auth.GoogleAuthProvider();
-    provider.addScope("https://www.googleapis.com/auth/contacts.readonly");
-    provider.setCustomParameters({ login_hint: "user@example.com" });
-    return from(
-      this.angular_fire_auth.signInWithPopup(provider).then((res) => {
-        this.user = res;
-      }),
-    ).pipe(
-      map(() => {
-        this.router.navigate(["/home"]);
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    provider.setCustomParameters({ login_hint: 'user@example.com' });
+    return from(this.angular_fire_auth.signInWithPopup(provider)).pipe(
+      map((res: any) => {
+        this.userSubject.next(res.user);
+        this.autoLogin();
       }),
       catchError((error: any) => {
         console.error(
@@ -85,11 +129,12 @@ export class FireAuthServiceService {
   }
   signInWithFacebook(): Observable<any> {
     const provider = new firebase.auth.FacebookAuthProvider();
-    provider.setCustomParameters({ display: "popup" });
-    provider.addScope("user_birthday");
+    provider.setCustomParameters({ display: 'popup' });
+    provider.addScope('user_birthday');
     return from(this.angular_fire_auth.signInWithPopup(provider)).pipe(
-      map(() => {
-        this.router.navigate(["/home"]);
+      map((res: any) => {
+        this.userSubject.next(res.user);
+        this.autoLogin();
       }),
       catchError((error: any) => {
         console.error(
@@ -101,11 +146,12 @@ export class FireAuthServiceService {
   }
   signInWithGitHub(): Observable<any> {
     const provider = new firebase.auth.GithubAuthProvider();
-    provider.addScope("repo");
-    provider.setCustomParameters({ allow_signup: "false" });
+    provider.addScope('repo');
+    provider.setCustomParameters({ allow_signup: 'false' });
     return from(this.angular_fire_auth.signInWithPopup(provider)).pipe(
-      map(() => {
-        this.router.navigate(["/home"]);
+      map((res: any) => {
+        this.userSubject.next(res.user);
+        this.autoLogin();
       }),
       catchError((error: any) => {
         console.error(

@@ -28,6 +28,7 @@ export class LoginComponent {
     };
     this.signUp =
       this._route.snapshot.paramMap.get("signUp") === "signUp" ? true : false;
+
   }
   toggleShowPassword() {
     this.visible = !this.visible;
@@ -47,7 +48,7 @@ export class LoginComponent {
         });
     } else {
       this.authService
-        .register(this.user.email, this.user.password)
+        .register(this.user.email, this.user.password,this.user.name)
         .subscribe((res) => console.log(res));
     }
   }
