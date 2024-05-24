@@ -13,7 +13,7 @@ const routes: Routes = [
     component: HomeComponent,
     canActivate: [authGuard],
   },
-  { path: 'call/:callId', component: CallComponent },
+  { path: 'call/:roomID', component: CallComponent },
   { path: ':signUp', component: LoginComponent },
 ];
 

@@ -6,6 +6,8 @@ import { User } from '@angular/fire/auth';
 
 import { Subject } from 'rxjs';
 import { WebcamImage } from 'ngx-webcam';
+import { SocketConnectionServiceService } from '../connection/socket-connection-service.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +19,8 @@ export class HomeComponent {
   constructor(
     private authService: FireAuthServiceService,
     private afAuth: AngularFireAuth,
-  ) { }
+    private connectionService: SocketConnectionServiceService,
+  ) {}
   user: User | null = null;
   userName: string = '';
   // toggleCam: boolean = true;
@@ -25,13 +28,15 @@ export class HomeComponent {
   toggleMic: boolean = false;
   imgSrc: string | null = '../../assets/video_off.svg';
   audioStream!: MediaStream;
-  vwidth=190;
+  createRoomID: string = '';
+  receivedRoomID: string = '';
+  vwidth = 190;
   public triggerObservable: Subject<void> = new Subject<void>();
   async ngOnInit() {
     this.authService.user$.subscribe((user: any) => {
       this.user = user;
       this.userName = user.displayName ?? user.email.split('@')[0];
-      this.userName = this.userName.split(" ")[0];
+      this.userName = this.userName.split(' ')[0];
       this.imgSrc = user.photoURL ?? '../../assets/video_off.svg';
     });
     this.audioStream = await navigator.mediaDevices.getUserMedia({
@@ -39,9 +44,10 @@ export class HomeComponent {
     });
     this.audioElement.nativeElement.srcObject = this.audioStream;
     this.audioElement.nativeElement.pause();
+    this.createRoomID = this.connectionService.createRoomID();
     // this.audioElement.nativeElement.play();
   }
-  public handleImage(webcamImage: WebcamImage) { }
+  public handleImage(webcamImage: WebcamImage) {}
 
   handleToggleCam() {
     this.toggleCam = !this.toggleCam;
@@ -54,4 +60,22 @@ export class HomeComponent {
     }
     this.toggleMic = !this.toggleMic;
   }
+  enterRoom() {
+    this.connectionService.initiateRoomConnection(
+      this.createRoomID,
+      this.userName,
+      this.imgSrc!,
+      this.user!.email!,
+    );
+  }
+  joinRoom() {
+    console.log("recevied Room ID:",this.receivedRoomID);
+    this.connectionService.joinRoom(
+      this.receivedRoomID,
+      this.userName,
+      this.imgSrc!,
+      this.user!.email!,
+    );
+  }
+  //inputs here
 }

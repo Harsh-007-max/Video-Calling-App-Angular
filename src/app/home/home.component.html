@@ -45,10 +45,12 @@
           class="py-2 px-4 rounded-full w-full bg-gray-500 bg-opacity-25"
           name="roomID"
           placeholder="room ID Here"
+          [value]="createRoomID"
+          readonly
         />
-        <button type="button" class="-ml-9 mt-2">
-          <span class="material-symbols-outlined"> content_copy </span>
-        </button>
+        <!-- <button type="button" class="-ml-8 m-2 px-4 h-full bg-black rounded-r-full" style=""> -->
+        <!--   <span class="material-symbols-outlined"> content_copy </span> -->
+        <!-- </button> -->
       </div>
       <div class="">
         <input
@@ -56,13 +58,14 @@
           class="py-2 px-4 rounded-full w-full bg-gray-500 bg-opacity-25"
           name="roomID"
           placeholder="paste exisiting Romm ID"
+          [(ngModel)]="receivedRoomID"
         />
       </div>
       <div class="flex justify-evenly">
-        <button type="button" class="bg-purple-700 bg-opacity-50 py-1 px-2 w-fit rounded-full">
+        <button type="button" class="bg-purple-700 bg-opacity-50 py-1 px-2 w-fit rounded-full" (click)="joinRoom()">
           Join Call
         </button>
-        <button type="button" class="bg-purple-700 bg-opacity-50 py-1 px-2 w-fit rounded-full">
+        <button type="button" class="bg-purple-700 bg-opacity-50 py-1 px-2 w-fit rounded-full" (click)="enterRoom()">
           Enter Room
         </button>
       </div>
