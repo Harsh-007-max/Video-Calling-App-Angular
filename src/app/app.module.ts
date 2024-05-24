@@ -9,6 +9,8 @@ import { AngularFireAuthModule, PERSISTENCE } from '@angular/fire/compat/auth';
 import { defaultEnvironment } from './environments/environment.default';
 import { AngularFireAuthGuardModule } from '@angular/fire/compat/auth-guard';
 
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -19,7 +21,6 @@ import { CallComponent } from './call/call.component';
 
 import { WebcamModule } from 'ngx-webcam';
 
-import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 const config: SocketIoConfig = {
   url: defaultEnvironment.socketAPI,
@@ -40,11 +41,11 @@ const config: SocketIoConfig = {
     BrowserModule,
     FormsModule,
     NgxParticlesModule,
+    SocketIoModule.forRoot(config),
     AngularFireModule.initializeApp(defaultEnvironment.firebase),
     AngularFireAuthModule,
     AngularFireAuthGuardModule,
     WebcamModule,
-    SocketIoModule.forRoot(config),
   ],
   providers: [{ provide: PERSISTENCE, useValue: 'local' }],
   bootstrap: [AppComponent],
