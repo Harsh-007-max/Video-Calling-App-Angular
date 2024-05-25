@@ -8,12 +8,12 @@
         class="flex video-container w-52 h-52 items-center justify-center rounded-2xl border-2 border-gray-900 bg-opacity-100 bg-black"
       >
         <webcam
-          *ngIf="toggleCam"
+          *ngIf="this.connectionService.toggleCam"
           [width]="vwidth"
           [trigger]="triggerObservable"
           (imageCapture)="handleImage($event)"
         ></webcam>
-        <img [src]="imgSrc" class="w-8 rounded-full" *ngIf="!toggleCam" />
+        <img [src]="imgSrc" class="w-8 rounded-full" *ngIf="!this.connectionService.toggleCam" />
 
         <audio #audioElement autoplay></audio>
       </div>
@@ -23,18 +23,18 @@
         class="flex justify-evenly blur-bg p-3 pb-2 rounded-2xl"
       >
         <button type="button" (click)="handleToggleCam()">
-          <span *ngIf="!toggleCam" class="material-symbols-outlined">
+          <span *ngIf="!this.connectionService.toggleCam" class="material-symbols-outlined">
             videocam
           </span>
-          <span *ngIf="toggleCam" class="material-symbols-outlined">
+          <span *ngIf="this.connectionService.toggleCam" class="material-symbols-outlined">
             videocam_off
           </span>
         </button>
         <button type="button" (click)="handleToggleMic()">
-          <span *ngIf="!toggleMic" class="material-symbols-outlined">
+          <span *ngIf="!this.connectionService.toggleMic" class="material-symbols-outlined">
             mic
           </span>
-          <span *ngIf="toggleMic" class="material-symbols-outlined">
+          <span *ngIf="this.connectionService.toggleMic" class="material-symbols-outlined">
             mic_off
           </span>
         </button>

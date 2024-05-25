@@ -19,13 +19,11 @@ export class HomeComponent {
   constructor(
     private authService: FireAuthServiceService,
     private afAuth: AngularFireAuth,
-    private connectionService: SocketConnectionServiceService,
+    public connectionService: SocketConnectionServiceService,
   ) {}
   user: User | null = null;
   userName: string = '';
   // toggleCam: boolean = true;
-  toggleCam: boolean = false;
-  toggleMic: boolean = false;
   imgSrc: string | null = '../../assets/video_off.svg';
   audioStream!: MediaStream;
   createRoomID: string = '';
@@ -50,15 +48,15 @@ export class HomeComponent {
   public handleImage(webcamImage: WebcamImage) {}
 
   handleToggleCam() {
-    this.toggleCam = !this.toggleCam;
+    this.connectionService.toggleCam = !this.connectionService.toggleCam;
   }
   async handleToggleMic() {
-    if (this.toggleMic) {
+    if (this.connectionService.toggleMic) {
       this.audioElement.nativeElement.play();
     } else {
       this.audioElement.nativeElement.pause();
     }
-    this.toggleMic = !this.toggleMic;
+    this.connectionService.toggleMic = !this.connectionService.toggleMic;
   }
   enterRoom() {
     this.connectionService.initiateRoomConnection(
