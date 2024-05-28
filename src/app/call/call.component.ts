@@ -42,9 +42,9 @@ export class CallComponent implements OnInit, AfterViewInit {
     );
   }
   async ngAfterViewInit() {
-    this.socCon.addPeerConnectionTrackListener();
     this.localVideo.nativeElement.srcObject = this.socCon.localStream;
     this.remoteVideo.nativeElement.srcObject = this.socCon.remoteStream;
+    this.socCon.sendStream();
     console.log(this.socCon.localStream);
     console.log(this.socCon.remoteStream);
   }

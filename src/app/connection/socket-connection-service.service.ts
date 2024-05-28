@@ -42,12 +42,12 @@ export class SocketConnectionServiceService {
       }
     };
 
-    peerConnection.ontrack = (event) => {
-      event.streams[0].getTracks().forEach((track) => {
-        console.log('addPeerConnectionTrackListener1');
-        this.remoteStream.addTrack(track);
-      });
-    };
+    // peerConnection.ontrack = (event) => {
+    //   event.streams[0].getTracks().forEach((track) => {
+    //     console.log('addPeerConnectionTrackListener1');
+    //     this.remoteStream.addTrack(track);
+    //   });
+    // };
     return peerConnection;
   }
   addPeerConnectionTrackListener() {
@@ -64,16 +64,6 @@ export class SocketConnectionServiceService {
     this._socket.on('peer:ice-candidate', (data: any) =>
       this.handleNewICECandidate(data),
     );
-
-    // this._socket.on('peer:call-accepted', (data: any) =>
-    //   this.handleCallAccept(data),
-    // );
-    // this._socket.on('peer:negotiate', (data: any) =>
-    //   this.hanldeIncommingNegotiation(data),
-    // );
-    // this._socket.on('peer:negotiation-result', (data: any) =>
-    //   this.handleFinalizeNegotiation(data),
-    // );
   }
   handleNewICECandidate(data: any) {
     const candidate = new RTCIceCandidate(data.candidate);
@@ -112,6 +102,7 @@ export class SocketConnectionServiceService {
       email,
     });
     this.showRemoteStream = true;
+    // this.addPeerConnectionTrackListener();
     this.router.navigate([`/call/${roomID}`]);
   }
   async getOffer() {
@@ -123,9 +114,7 @@ export class SocketConnectionServiceService {
   }
 
   async getAnswer(offer: any) {
-    await this.peerConnection.setRemoteDescription(
-      new RTCSessionDescription(offer),
-    );
+    await this.peerConnection.setRemoteDescription(offer);
     const answer = await this.peerConnection.createAnswer();
     await this.peerConnection.setLocalDescription(
       new RTCSessionDescription(answer),
@@ -139,11 +128,9 @@ export class SocketConnectionServiceService {
       video: true,
     });
     this.localStream = stream;
-    console.log('userMediaControl');
   }
 
   sendStream() {
-    console.log('sendStream');
     for (const track of this.localStream.getTracks()) {
       this.peerConnection.addTrack(track, this.localStream);
     }
@@ -152,6 +139,7 @@ export class SocketConnectionServiceService {
   async handleUserJoined(data: any) {
     const { username, socketId, roomID } = data;
     await this.userMediaControl();
+    this.roomID = roomID;
     const offer = await this.getOffer();
     this.remoteSocketID = socketId;
     console.log(username, 'joined the room');
@@ -160,9 +148,10 @@ export class SocketConnectionServiceService {
   }
   async handleIncommingCall(data: any) {
     const { from, offer } = data;
-    this.remoteSocketID = from;
+    // this.remoteSocketID = from;
     await this.userMediaControl();
     const answer = await this.getAnswer(offer);
+    console.log('answer:', answer);
     // this._socket.emit('peer:call-accepted', { to: from, answer });
     this._socket.emit('peer:call-accepted', { to: from, answer });
   }
@@ -175,30 +164,28 @@ export class SocketConnectionServiceService {
     this.sendStream();
     // const answer = await this.getAnswer(offer);
     // this._socket.emit('peer:call-accepted', { to: from, offer: answer });
+
     await this.handleNegotiation();
   }
 
   async handleNegotiation() {
     const offer = await this.getOffer();
+    console.log('handleNegotiation');
+    this._socket.emit('peer:negotiation', { to: this.roomID, offer });
     this._socket.emit('peer:negotiation', { to: this.remoteSocketID, offer });
   }
 
   async hanldeIncommingNegotiation(data: any) {
     const { from, offer } = data;
-    // await this.peerConnection.setRemoteDescription(
-    //   new RTCSessionDescription(offer),
-    // );
     const answer = await this.getAnswer(offer);
-    // await this.peerConnection
-    //   .setRemoteDescription(new RTCSessionDescription(offer))
-    //   .then(async () => {
-    //   });
+    console.log('hanldeIncommingNegotiation');
     this._socket.emit('peer:negotiation-result', { to: from, answer });
     // await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
   }
   async handleFinalizeNegotiation(data: any) {
     const { to, answer } = data;
-    await this.peerConnection.setLocalDescription(answer);
+    console.log('handleFinalizeNegotiation');
+    await this.peerConnection.setRemoteDescription(answer);
     // await this.peerConnection.setRemoteDescription(answer);
     // this.sendStream(this.localStream);
   }
