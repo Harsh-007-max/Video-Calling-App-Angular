@@ -5,19 +5,20 @@
       #localVideo
       width="400"
       height="400"
-      class="bg-red-900"
-      autoplay
-      muted
+      [autoplay]="true"
+      [muted]="true"
+      [srcObject]="this.socCon.localStream"
     ></video>
   </div>
-  <div class="flex flex-col">
+  <div class="flex flex-col" >
     remote stream
     <video
       #remoteVideo
       width="400"
       height="400"
-      class="bg-red-900"
-      autoplay
+      [autoplay]="true"
+      [srcObject]="this.socCon.remoteStream"
     ></video>
+    <span *ngIf="!this.socCon.showRemoteStream">waiting</span>
   </div>
 </div>

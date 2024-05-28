@@ -10,6 +10,7 @@
         <webcam
           *ngIf="this.connectionService.toggleCam"
           [width]="vwidth"
+          [height]="vheight"
           [trigger]="triggerObservable"
           (imageCapture)="handleImage($event)"
         ></webcam>

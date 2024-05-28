@@ -1,5 +1,3 @@
-// import { Subject } from 'rxjs';
-// import { WebcamImage } from 'ngx-webcam';
 import {
   AfterViewInit,
   Component,
@@ -15,11 +13,11 @@ import { SocketConnectionServiceService } from '../connection/socket-connection-
   styleUrl: './call.component.css',
 })
 export class CallComponent implements OnInit, AfterViewInit {
-  @ViewChild('localVideo') localVideo!: ElementRef<HTMLVideoElement>;
-  @ViewChild('remoteVideo') remoteVideo!: ElementRef<HTMLVideoElement>;
+  @ViewChild('localVideo') localVideo!: ElementRef;
+  @ViewChild('remoteVideo') remoteVideo!: ElementRef;
   constructor(
     private socket: Socket,
-    private socCon: SocketConnectionServiceService,
+    public socCon: SocketConnectionServiceService,
   ) {}
   ngOnInit() {
     this.socket.on(
@@ -43,14 +41,11 @@ export class CallComponent implements OnInit, AfterViewInit {
       this.socCon.handleFinalizeNegotiation.bind(this.socCon),
     );
   }
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    this.socCon.addPeerConnectionTrackListener();
     this.localVideo.nativeElement.srcObject = this.socCon.localStream;
     this.remoteVideo.nativeElement.srcObject = this.socCon.remoteStream;
-  }
-  async setupPeerConnection() {
-    await this.socCon.userMediaControl();
-  }
-  handleUserDisconnected(data: any) {
-    console.log(data);
+    console.log(this.socCon.localStream);
+    console.log(this.socCon.remoteStream);
   }
 }
