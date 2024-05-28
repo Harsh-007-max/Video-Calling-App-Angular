@@ -189,4 +189,19 @@ export class SocketConnectionServiceService {
     // await this.peerConnection.setRemoteDescription(answer);
     // this.sendStream(this.localStream);
   }
+  disconnect() {
+    if (this.peerConnection) {
+      this.peerConnection.close();
+      this.peerConnection = this.initializePeerConnection();
+    }
+
+    this.localStream.getTracks().forEach((track) => track.stop());
+    this.remoteStream.getTracks().forEach((track) => track.stop());
+
+    this._socket.emit('peer:disconnect', { roomID: this.roomID });
+
+    this.localStream = new MediaStream();
+    this.remoteStream = new MediaStream();
+    this.router.navigate(['/home']);
+  }
 }

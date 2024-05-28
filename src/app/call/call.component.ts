@@ -48,4 +48,7 @@ export class CallComponent implements OnInit, AfterViewInit {
     console.log(this.socCon.localStream);
     console.log(this.socCon.remoteStream);
   }
+  handleCallDisconnect(){
+    this.socCon.disconnect();
+  }
 }

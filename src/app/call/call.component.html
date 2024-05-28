@@ -1,26 +1,32 @@
-<div class="flex space-x-10">
-  <div class="flex flex-col">
-    Local stream
+<div class="flex space-x-10 min-h-svh">
+  <div
+    class="border-2 border-grey-900 max-h-[90vh] rounded-3xl flex flex-col justify-center items-center mx-10 mt-1"
+  >
+    <video
+      #remoteVideo
+      class="w-screen"
+      [autoplay]="true"
+      [muted]="true"
+      [srcObject]="this.socCon.remoteStream"
+    ></video>
+    <button
+      type="button"
+      class="absolute material-symbols-outlined items-center justify-center bg-red-900 p-5 rounded-full bg-opacity-100 bottom-16"
+      style="background-color: rgba(127, 29, 29, 1)"
+      (click)="handleCallDisconnect()"
+    >
+      call_end
+    </button>
+  </div>
+  <div
+    class="absolute right-16 top-20 flex justify-center items-center bg-black rounded-2xl h-48 w-48 border-2 border-grey-500 border-opacity-10 bg-opacity-100"
+  >
     <video
       #localVideo
-      width="400"
-      height="400"
+      class="w-[100%]"
       [autoplay]="true"
       [muted]="true"
       [srcObject]="this.socCon.localStream"
     ></video>
-  </div>
-  <div class="flex flex-col">
-    remote stream
-    <div class="" >
-      <video
-        #remoteVideo
-        width="400"
-        height="400"
-        [autoplay]="true"
-        [srcObject]="this.socCon.remoteStream"
-      ></video>
-    </div>
-    <span *ngIf="!this.socCon.showRemoteStream">waiting</span>
   </div>
 </div>
