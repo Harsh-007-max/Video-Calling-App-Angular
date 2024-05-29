@@ -14,6 +14,7 @@ export class SocketConnectionServiceService {
   localStream: MediaStream = new MediaStream();
   peerConnection: RTCPeerConnection;
   remoteSocketID: any;
+  user: any;
   constructor(
     private _socket: Socket,
     private router: Router,
@@ -202,6 +203,10 @@ export class SocketConnectionServiceService {
 
     this.localStream = new MediaStream();
     this.remoteStream = new MediaStream();
+    this.router.navigate(['/home']);
+  }
+  handlePeerDisconnect() {
+    this.disconnect();
     this.router.navigate(['/home']);
   }
 }

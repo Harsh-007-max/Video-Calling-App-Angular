@@ -1,0 +1,8 @@
+.black-bg {
+  background-color: rgb(255, 255, 255);
+}
+
+.blur-bg {
+  backdrop-filter: blur(5px);
+  --webkit-backdrop-filter: blur(5px);
+}

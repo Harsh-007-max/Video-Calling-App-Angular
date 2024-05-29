@@ -36,6 +36,7 @@ export class HomeComponent {
       this.userName = user.displayName ?? user.email.split('@')[0];
       this.userName = this.userName.split(' ')[0];
       this.imgSrc = user.photoURL ?? '../../assets/video_off.svg';
+      this.connectionService.user = user;
     });
     this.audioStream = await navigator.mediaDevices.getUserMedia({
       video: true,
