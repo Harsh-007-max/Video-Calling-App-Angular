@@ -43,12 +43,6 @@ export class SocketConnectionServiceService {
       }
     };
 
-    // peerConnection.ontrack = (event) => {
-    //   event.streams[0].getTracks().forEach((track) => {
-    //     console.log('addPeerConnectionTrackListener1');
-    //     this.remoteStream.addTrack(track);
-    //   });
-    // };
     return peerConnection;
   }
   addPeerConnectionTrackListener() {
@@ -103,7 +97,6 @@ export class SocketConnectionServiceService {
       email,
     });
     this.showRemoteStream = true;
-    // this.addPeerConnectionTrackListener();
     this.router.navigate([`/call/${roomID}`]);
   }
   async getOffer() {
@@ -123,10 +116,10 @@ export class SocketConnectionServiceService {
     return answer;
   }
 
-  async userMediaControl() {
+  async userMediaControl(video:boolean,audio:boolean) {
     const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
+      audio:audio,
+      video:video,
     });
     this.localStream = stream;
   }
@@ -136,24 +129,29 @@ export class SocketConnectionServiceService {
       this.peerConnection.addTrack(track, this.localStream);
     }
   }
+  toggleRemoteStream() {
+    this.toggleCam = !this.toggleCam
+    if(this.toggleCam){
+      this.remoteStream.getVideoTracks().forEach(track=>track.enabled=true)
+    }else{
+      this.remoteStream.getVideoTracks().forEach(track=>track.enabled=false)
+    }
+  }
 
   async handleUserJoined(data: any) {
     const { username, socketId, roomID } = data;
-    await this.userMediaControl();
+    await this.userMediaControl(this.toggleCam,this.toggleMic);
     this.roomID = roomID;
     const offer = await this.getOffer();
     this.remoteSocketID = socketId;
     console.log(username, 'joined the room');
-    // this._socket.emit('peer:init-call', { to: this.remoteSocketID, offer });
     this._socket.emit('peer:init-call', { to: roomID, offer });
   }
   async handleIncommingCall(data: any) {
     const { from, offer } = data;
-    // this.remoteSocketID = from;
-    await this.userMediaControl();
+    await this.userMediaControl(this.toggleCam,this.toggleMic);
     const answer = await this.getAnswer(offer);
     console.log('answer:', answer);
-    // this._socket.emit('peer:call-accepted', { to: from, answer });
     this._socket.emit('peer:call-accepted', { to: from, answer });
   }
 
@@ -161,11 +159,8 @@ export class SocketConnectionServiceService {
     const { from, answer } = data;
     this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     console.log('handleCallAccepted to:', from, 'answer: ', answer);
-    this.userMediaControl();
+    this.userMediaControl(this.toggleCam,this.toggleMic);
     this.sendStream();
-    // const answer = await this.getAnswer(offer);
-    // this._socket.emit('peer:call-accepted', { to: from, offer: answer });
-
     await this.handleNegotiation();
   }
 
@@ -208,5 +203,8 @@ export class SocketConnectionServiceService {
   handlePeerDisconnect() {
     this.disconnect();
     this.router.navigate(['/home']);
+  }
+  handleToggleVideoStream(){
+    this._socket.emit("stop:video",{roomID:this.roomID})
   }
 }

@@ -19,7 +19,7 @@ export class HomeComponent {
     private authService: FireAuthServiceService,
     public connectionService: SocketConnectionServiceService,
     private socket: Socket,
-  ) { }
+  ) {}
   user: User | null = null;
   userName: string = '';
   imgSrc: string | null = '../../assets/video_off.svg';
@@ -55,7 +55,7 @@ export class HomeComponent {
         audio: true,
       });
   }
-  public handleImage(webcamImage: WebcamImage) { }
+  public handleImage(webcamImage: WebcamImage) {}
 
   async handleToggleCam() {
     this.connectionService.toggleCam = !this.connectionService.toggleCam;
@@ -77,7 +77,10 @@ export class HomeComponent {
       this.imgSrc!,
       this.user!.email!,
     );
-    await this.connectionService.userMediaControl();
+    await this.connectionService.userMediaControl(
+      this.connectionService.toggleCam,
+      this.connectionService.toggleMic,
+    );
     this.connectionService.addPeerConnectionTrackListener();
   }
   async joinRoom() {
@@ -88,7 +91,10 @@ export class HomeComponent {
       this.imgSrc!,
       this.user!.email!,
     );
-    await this.connectionService.userMediaControl();
+    await this.connectionService.userMediaControl(
+      this.connectionService.toggleCam,
+      this.connectionService.toggleMic,
+    );
     this.connectionService.addPeerConnectionTrackListener();
   }
 }

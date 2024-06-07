@@ -14,10 +14,10 @@
         class="p-4 pb-3 rounded-full mr-3 black-bg blur-bg border-2 border-gray-900"
         (click)="handleToggleCam()"
       >
-        <span *ngIf="this.toggleCam" class="material-symbols-outlined"
+        <span *ngIf="this.socCon.toggleCam" class="material-symbols-outlined"
           >videocam</span
         >
-        <span *ngIf="!this.toggleCam" class="material-symbols-outlined"
+        <span *ngIf="!this.socCon.toggleCam" class="material-symbols-outlined"
           >videocam_off</span
         >
       </button>
@@ -31,13 +31,13 @@
       </button>
       <button
         type="button"
-        class=" items-center justify-center p-4 pb-3 rounded-full bg-opacity-100 ml-3 black-bg blur-bg border-2 border-gray-900"
+        class="items-center justify-center p-4 pb-3 rounded-full bg-opacity-100 ml-3 black-bg blur-bg border-2 border-gray-900"
         (click)="handleToggleMic()"
       >
-        <span *ngIf="!this.toggleMic" class="material-symbols-outlined"
+        <span *ngIf="!this.socCon.toggleMic" class="material-symbols-outlined"
           >mic_off</span
         >
-        <span *ngIf="this.toggleMic" class="material-symbols-outlined"
+        <span *ngIf="this.socCon.toggleMic" class="material-symbols-outlined"
           >mic</span
         >
       </button>
@@ -52,10 +52,10 @@
       [autoplay]="true"
       [muted]="true"
       [srcObject]="this.socCon.localStream"
-      *ngIf="this.toggleCam"
+      *ngIf="this.socCon.toggleCam"
     ></video>
 
-    <div class="flex items-center justify-center" *ngIf="!this.toggleCam">
+    <div class="flex items-center justify-center" *ngIf="!this.socCon.toggleCam">
       <img [src]="this.socCon.user.photoURL" class="rounded-full w-10" alt="" />
     </div>
   </div>

@@ -19,8 +19,6 @@ export class CallComponent implements OnInit, AfterViewInit {
     private socket: Socket,
     public socCon: SocketConnectionServiceService,
   ) {}
-  toggleMic: boolean = this.socCon.toggleMic;
-  toggleCam: boolean = this.socCon.toggleCam;
   remoteThumbnail: string = '../../assets/video_off.svg';
   ngOnInit() {
     this.socket.on(
@@ -47,29 +45,31 @@ export class CallComponent implements OnInit, AfterViewInit {
       'peer:disconnect',
       this.socCon.handlePeerDisconnect.bind(this.socCon),
     );
+    this.socket.on(
+      'stop:remoteVideo',
+      this.socCon.handleToggleVideoStream.bind(this.socCon),
+    );
   }
   async ngAfterViewInit() {
-    try {
-      this.localVideo.nativeElement.srcObject = this.socCon.localStream;
-      this.remoteVideo.nativeElement.srcObject = this.socCon.remoteStream;
-      this.socCon.sendStream();
-      console.log(this.socCon.localStream);
-      console.log(this.socCon.remoteStream);
-    } catch (error) {}
+    // try {
+    this.localVideo.nativeElement.srcObject = this.socCon.localStream;
+    this.remoteVideo.nativeElement.srcObject = this.socCon.remoteStream;
+    this.socCon.sendStream();
+    console.log(this.socCon.localStream);
+    console.log(this.socCon.remoteStream);
+    // } catch (error) {}
   }
   handleCallDisconnect() {
     this.socCon.disconnect();
   }
   handleToggleMic() {
-    this.toggleMic = !this.toggleMic;
+    this.socCon.toggleMic = !this.socCon.toggleMic;
     this.socCon.localStream.getAudioTracks().forEach((track) => {
-      track.enabled = this.toggleMic;
+      track.enabled = this.socCon.toggleMic;
     });
   }
   handleToggleCam() {
-    this.toggleCam = !this.toggleCam;
-    this.socCon.localStream.getVideoTracks().forEach((track) => {
-      track.enabled = this.toggleCam;
-    });
+      this.socCon.toggleRemoteStream()
+    }
   }
-}
+
