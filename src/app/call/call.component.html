@@ -11,11 +11,15 @@
     <div class="controls absolute bottom-16 z-50">
       <button
         type="button"
-        class="material-symbols-outlined p-4 rounded-full mr-3 black-bg"
+        class="p-4 rounded-full mr-3 black-bg blur-bg border-2 border-gray-900"
         (click)="handleToggleCam()"
       >
-        <span *ngIf="this.toggleCam">videocam</span>
-        <span *ngIf="!this.toggleCam">videocam_off</span>
+        <span *ngIf="this.toggleCam" class="material-symbols-outlined"
+          >videocam</span
+        >
+        <span *ngIf="!this.toggleCam" class="material-symbols-outlined"
+          >videocam_off</span
+        >
       </button>
       <button
         type="button"
@@ -27,11 +31,15 @@
       </button>
       <button
         type="button"
-        class="material-symbols-outlined items-center justify-center p-4 rounded-full bg-white bg-opacity-100 ml-3 black-bg"
+        class=" items-center justify-center p-4 rounded-full bg-opacity-100 ml-3 black-bg blur-bg border-2 border-gray-900"
         (click)="handleToggleMic()"
       >
-        <span *ngIf="!this.toggleMic">mic_off</span>
-        <span *ngIf="this.toggleMic">mic</span>
+        <span *ngIf="!this.toggleMic" class="material-symbols-outlined"
+          >mic_off</span
+        >
+        <span *ngIf="this.toggleMic" class="material-symbols-outlined"
+          >mic</span
+        >
       </button>
     </div>
   </div>
