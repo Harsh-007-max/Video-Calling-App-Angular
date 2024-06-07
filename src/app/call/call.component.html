@@ -7,7 +7,12 @@
       class="w-screen h-full"
       [autoplay]="true"
       [srcObject]="this.socCon.remoteStream"
+      *ngIf="this.socCon.toggleRemoteCam"
     ></video>
+
+    <div class="flex items-center justify-center w-screen h-full" *ngIf="!this.socCon.toggleRemoteCam">
+      <img [src]="this.socCon.user.photoURL" class="rounded-full w-10" alt="" />
+    </div>
     <div class="controls absolute bottom-16 z-50">
       <button
         type="button"

@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class SocketConnectionServiceService {
   roomID: string = '';
-  toggleCam: boolean = false;
-  toggleMic: boolean = false;
+  toggleCam: boolean = false; toggleMic: boolean = false; toggleRemoteCam:boolean =true;
+  toggleRemoteMic:boolean =true;
   remoteStream: MediaStream = new MediaStream();
   showRemoteStream: boolean = false;
   localStream: MediaStream = new MediaStream();
@@ -116,10 +116,10 @@ export class SocketConnectionServiceService {
     return answer;
   }
 
-  async userMediaControl(video:boolean,audio:boolean) {
+  async userMediaControl(video: boolean, audio: boolean) {
     const stream = await navigator.mediaDevices.getUserMedia({
-      audio:audio,
-      video:video,
+      audio: audio,
+      video: video,
     });
     this.localStream = stream;
   }
@@ -129,18 +129,10 @@ export class SocketConnectionServiceService {
       this.peerConnection.addTrack(track, this.localStream);
     }
   }
-  toggleRemoteStream() {
-    this.toggleCam = !this.toggleCam
-    if(this.toggleCam){
-      this.remoteStream.getVideoTracks().forEach(track=>track.enabled=true)
-    }else{
-      this.remoteStream.getVideoTracks().forEach(track=>track.enabled=false)
-    }
-  }
 
   async handleUserJoined(data: any) {
     const { username, socketId, roomID } = data;
-    await this.userMediaControl(this.toggleCam,this.toggleMic);
+    await this.userMediaControl(this.toggleCam, this.toggleMic);
     this.roomID = roomID;
     const offer = await this.getOffer();
     this.remoteSocketID = socketId;
@@ -149,7 +141,7 @@ export class SocketConnectionServiceService {
   }
   async handleIncommingCall(data: any) {
     const { from, offer } = data;
-    await this.userMediaControl(this.toggleCam,this.toggleMic);
+    await this.userMediaControl(this.toggleCam, this.toggleMic);
     const answer = await this.getAnswer(offer);
     console.log('answer:', answer);
     this._socket.emit('peer:call-accepted', { to: from, answer });
@@ -159,7 +151,7 @@ export class SocketConnectionServiceService {
     const { from, answer } = data;
     this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
     console.log('handleCallAccepted to:', from, 'answer: ', answer);
-    this.userMediaControl(this.toggleCam,this.toggleMic);
+    this.userMediaControl(this.toggleCam, this.toggleMic);
     this.sendStream();
     await this.handleNegotiation();
   }
@@ -176,14 +168,11 @@ export class SocketConnectionServiceService {
     const answer = await this.getAnswer(offer);
     console.log('hanldeIncommingNegotiation');
     this._socket.emit('peer:negotiation-result', { to: from, answer });
-    // await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
   }
   async handleFinalizeNegotiation(data: any) {
     const { to, answer } = data;
     console.log('handleFinalizeNegotiation');
     await this.peerConnection.setRemoteDescription(answer);
-    // await this.peerConnection.setRemoteDescription(answer);
-    // this.sendStream(this.localStream);
   }
   disconnect() {
     if (this.peerConnection) {
@@ -204,7 +193,21 @@ export class SocketConnectionServiceService {
     this.disconnect();
     this.router.navigate(['/home']);
   }
-  handleToggleVideoStream(){
-    this._socket.emit("stop:video",{roomID:this.roomID})
+  handleToggleVideoStream() {
+    console.log("Handle Toggle Video")
+    this._socket.emit('stop:video', { roomID: this.roomID });
+  }
+  toggleRemoteStream() {
+    console.log('Toggle Video');
+    this.toggleRemoteCam = !this.toggleRemoteCam;
+    if (this.toggleCam) {
+      this.remoteStream
+        .getVideoTracks()
+        .forEach((track) => (track.enabled = true));
+    } else {
+      this.remoteStream
+        .getVideoTracks()
+        .forEach((track) => (track.enabled = false));
+    }
   }
 }

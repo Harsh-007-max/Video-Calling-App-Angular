@@ -47,7 +47,7 @@ export class CallComponent implements OnInit, AfterViewInit {
     );
     this.socket.on(
       'stop:remoteVideo',
-      this.socCon.handleToggleVideoStream.bind(this.socCon),
+      this.socCon.toggleRemoteStream.bind(this.socCon),
     );
   }
   async ngAfterViewInit() {
@@ -69,7 +69,6 @@ export class CallComponent implements OnInit, AfterViewInit {
     });
   }
   handleToggleCam() {
-      this.socCon.toggleRemoteStream()
-    }
+    this.socCon.handleToggleVideoStream();
   }
-
+}
